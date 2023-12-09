@@ -1,0 +1,48 @@
+services:
+  backend-fastapi:
+    build:
+      context: ./backend
+    container_name: project-houdini-backend-fastapi
+    depends_on:
+      database-postgres:
+        condition: service_started
+    networks:
+      backend-database: null
+    ports:
+      - mode: ingress
+        target: 80
+        published: "81"
+        protocol: tcp
+    restart: always
+  database-postgres:
+    container_name: project-houdini-db-postgres
+    env_file:
+      - environment.env
+    image: postgres
+    networks:
+      backend-database: null
+    ports:
+      - mode: ingress
+        target: 5432
+        published: "5432"
+        protocol: tcp
+    restart: always
+    volumes:
+      - ./database/data:/var/lib/postgresql/data
+      - ./database/postgresql.conf:/etc/postgresql.conf
+  vite-react:
+    build:
+      context: ./frontend
+    container_name: frontend-react
+    env_file:
+      - environment.env
+    networks:
+      frontend-network: null
+    ports:
+      - mode: ingress
+        target: 80
+        published: "80"
+        protocol: tcp
+networks:
+  backend-database: {}
+  frontend-network: {}
