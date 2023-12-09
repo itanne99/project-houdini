@@ -7,12 +7,9 @@ class NoteService:
 
     @staticmethod
     async def add_note(note_data: NoteInput):
-        note = Note()
-        note.name = note_data.name
-        note.description = note_data.description
-        await NoteRepository.create(note)
+        await NoteRepository.create(note_data)
 
-        return NoteType(id=note.id, name=note.name, description=note.description, createDate=note.createDate, updateDate=note.updateDate)
+        return NoteType(id=note_data.id, name=note_data.name, description=note_data.description, createDate=note_data.createDate, updateDate=note_data.updateDate)
 
     @staticmethod
     async def get_all_note():
@@ -27,13 +24,9 @@ class NoteService:
     @staticmethod
     async def delete(note_id: int):
         await NoteRepository.delete(note_id)
-        return f'Successfully deleted data by id {note_id}'
+        return {'message': f'Successfully deleted data by id {note_id}'}
 
     @staticmethod
     async def update(note_id:int, note_data: NoteInput):
-        note = Note()
-        note.name = note_data.name
-        note.description = note_data.description
-        await NoteRepository.update(note_id,note)
-
-        return f'Successfully updated data by id {note_id}'
+        await NoteRepository.update(note_id, note_data)
+        return {'message': f'Successfully updated data by id {note_id}'}
