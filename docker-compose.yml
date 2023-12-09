@@ -9,7 +9,7 @@ services:
       - ./backend:/code
     depends_on:
       database-postgres:
-        condition: service_started
+        condition: service_healthy
     networks:
       backend-database: null
     ports:
@@ -30,6 +30,10 @@ services:
         target: 5432
         published: "5432"
         protocol: tcp
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U magician"]
+      interval: 1s
+      retries: 30
     restart: always
     volumes:
       - ./database/data:/var/lib/postgresql/data
@@ -37,11 +41,14 @@ services:
   vite-react:
     build:
       context: ./frontend
-    container_name: frontend-react
+    container_name: project-houdini-frontend-react
     env_file:
       - environment.env
     networks:
-      frontend-network: null
+      backend-database: null
+    depends_on:
+      backend-fastapi:
+        condition: service_started
     ports:
       - mode: ingress
         target: 80
@@ -52,4 +59,3 @@ services:
       - /app/node_modules/
 networks:
   backend-database: {}
-  frontend-network: {}
