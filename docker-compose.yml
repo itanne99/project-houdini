@@ -3,6 +3,10 @@ services:
     build:
       context: ./backend
     container_name: project-houdini-backend-fastapi
+    env_file:
+      - environment.env
+    volumes:
+      - ./backend:/code
     depends_on:
       database-postgres:
         condition: service_started
@@ -43,6 +47,9 @@ services:
         target: 80
         published: "80"
         protocol: tcp
+    volumes:
+      - ./frontend:/app/
+      - /app/node_modules/
 networks:
   backend-database: {}
   frontend-network: {}
