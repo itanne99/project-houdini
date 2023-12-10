@@ -3,6 +3,9 @@ services:
     build:
       context: ./backend
     container_name: project-houdini-backend-fastapi
+    profiles:
+      - backend
+      - dev
     env_file:
       - environment.env
     volumes:
@@ -20,6 +23,9 @@ services:
     restart: always
   database-postgres:
     container_name: project-houdini-db-postgres
+    profiles:
+      - backend
+      - dev
     env_file:
       - environment.env
     image: postgres
@@ -41,14 +47,19 @@ services:
   vite-react:
     build:
       context: ./frontend
+      args:
+        ENV: dev
     container_name: project-houdini-frontend-react
+    profiles:
+      - dev
+      - frontend
     env_file:
       - environment.env
     networks:
       backend-database: null
-    depends_on:
-      backend-fastapi:
-        condition: service_started
+    # depends_on:
+    #   backend-fastapi:
+    #     condition: service_started
     ports:
       - mode: ingress
         target: 80
@@ -57,5 +68,27 @@ services:
     volumes:
       - ./frontend:/app/
       - /app/node_modules/
+  vite-react-production:
+    build:
+      context: ./frontend
+      dockerfile: prod.Dockerfile
+    container_name: project-houdini-frontend-react-production
+    profiles:
+      - prod
+    env_file:
+      - environment.env
+    networks:
+      backend-database: null
+    # depends_on:
+    #   backend-fastapi:
+    #     condition: service_started
+    ports:
+      - mode: ingress
+        target: 80
+        published: "80"
+        protocol: tcp
+  # volumes:
+  #   - ./frontend:/app/
+  #   - /app/node_modules/
 networks:
   backend-database: {}
