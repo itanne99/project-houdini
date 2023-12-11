@@ -26,6 +26,7 @@ services:
     profiles:
       - backend
       - dev
+      - nextjs
     env_file:
       - environment.env
     image: postgres
@@ -44,51 +45,25 @@ services:
     volumes:
       - ./database/data:/var/lib/postgresql/data
       - ./database/postgresql.conf:/etc/postgresql.conf
-  vite-react:
+  nextjs:
+    container_name: project-houdini-nextjs
     build:
-      context: ./frontend
-      args:
-        ENV: dev
-    container_name: project-houdini-frontend-react
+      context: ./nextjs
+      target: dev
     profiles:
       - dev
-      - frontend
-    env_file:
-      - environment.env
+      - nextjs
     networks:
       backend-database: null
-    # depends_on:
-    #   backend-fastapi:
-    #     condition: service_started
-    ports:
-      - mode: ingress
-        target: 80
-        published: "80"
-        protocol: tcp
+    restart: always
+    command: yarn dev
+    environment:
+      - NODE_ENV=development
     volumes:
-      - ./frontend:/app/
-      - /app/node_modules/
-  vite-react-production:
-    build:
-      context: ./frontend
-      dockerfile: prod.Dockerfile
-    container_name: project-houdini-frontend-react-production
-    profiles:
-      - prod
-    env_file:
-      - environment.env
-    networks:
-      backend-database: null
-    # depends_on:
-    #   backend-fastapi:
-    #     condition: service_started
+      - ./nextjs:/app
+      - /app/node_modules
+      - /app/.next
     ports:
-      - mode: ingress
-        target: 80
-        published: "80"
-        protocol: tcp
-  # volumes:
-  #   - ./frontend:/app/
-  #   - /app/node_modules/
+      - 3000:3000
 networks:
   backend-database: {}
