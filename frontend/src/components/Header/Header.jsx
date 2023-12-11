@@ -6,14 +6,13 @@ const navItems = [
     title: "Search",
     href: "/Search",
     dropdown: [
-      { label: "Action 1", href: "/action1" },
-      { label: "Action 2", href: "/action2" },
-      { label: "Action 3", href: "/action3" },
+      { label: "By Location", href: "/Location" },
+      { label: "By Name", href: "/Name" },
     ],
   },
-  { label: "About", href: "/about" },
-  { label: "Resources", href: "/resources" },
-  { label: "Donate", href: "/donate" },
+  { label: "About", href: "/About" },
+  { label: "Resources", href: "/Resources" },
+  { label: "Donate", href: "/Donate" },
 ];
 
 const generateNavItems = (items) => {
@@ -33,7 +32,7 @@ const generateNavItems = (items) => {
           <Dropdown.Menu>
             {item.dropdown.map((dropdownItem, indexB) => (
               <Dropdown.Item
-                to={dropdownItem.href}
+                to={`${item.href}${dropdownItem.href}`}
                 key={dropdownItem.id || `${item.id || indexA}-${indexB}`}
                 as={Link}
               >
