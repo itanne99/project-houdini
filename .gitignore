@@ -2,3 +2,4 @@
 
 environment.env
 database
+liquibase.docker.properties

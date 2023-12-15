@@ -1,32 +1,9 @@
 services:
-  backend-fastapi:
-    build:
-      context: ./backend
-    container_name: project-houdini-backend-fastapi
-    profiles:
-      - backend
-      - dev
-    env_file:
-      - environment.env
-    volumes:
-      - ./backend:/code
-    depends_on:
-      database-postgres:
-        condition: service_healthy
-    networks:
-      backend-database: null
-    ports:
-      - mode: ingress
-        target: 80
-        published: "81"
-        protocol: tcp
-    restart: always
   database-postgres:
     container_name: project-houdini-db-postgres
     profiles:
-      - backend
       - dev
-      - nextjs
+      - db
     env_file:
       - environment.env
     image: postgres
@@ -52,7 +29,6 @@ services:
       target: dev
     profiles:
       - dev
-      - nextjs
     networks:
       backend-database: null
     restart: always
@@ -65,5 +41,18 @@ services:
       - /app/.next
     ports:
       - 3000:3000
+  migrations:
+    image: liquibase/liquibase
+    container_name: project-houdini-liquibase
+    profiles:
+      - migrations
+    depends_on:
+      database-postgres:
+        condition: service_healthy
+    volumes:
+      - ./liquibase:/liquibase/changelog
+    networks:
+      backend-database: null
+    command: --defaults-file=/liquibase/changelog/liquibase.docker.properties update
 networks:
   backend-database: {}

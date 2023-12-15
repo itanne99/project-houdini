@@ -1,0 +1,41 @@
+databaseChangeLog:
+  - changeSet:
+      id: changelog-1
+      author: Itanne
+      changes:
+        - createTable:
+            schemaName: dev
+            tableName: user
+            columns:
+            - column:
+                name: id
+                type: bigserial
+            - column:
+                name: firstName
+                type: varchar(50)
+            - column:
+                name: lastName
+                type: varchar(50)
+            - column:
+                name: email
+                type: varchar(125)
+            - column:
+                name: username
+                type: varchar(50)
+            - column:
+                name: password
+                type: varchar(50)
+            - column:
+                name: createDate
+                type: datetime
+            - column:
+                name: updateDate
+                type: datetime
+            - column:
+                name: lastLogin
+                type: datetime
+  - changeSet:
+      id: changelog-2
+      author: itanne
+      changes:
+          
